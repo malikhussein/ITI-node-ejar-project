@@ -1,27 +1,27 @@
 import { Router } from "express";
-import { createCategory, getAllCategories } from "../controllers/category.controller.js";
+import {
+  createCategory,
+  getAllCategories,
+  getCategoryById,
+  updateCategory,
+} from "../controllers/category.controller.js";
 
 const categoryRoutes = Router();
-
 
 //create category
 categoryRoutes.post("/", createCategory);
 
 //get all categories
-categoryRoutes.get("/", getAllCategories)
+categoryRoutes.get("/", getAllCategories);
 //get single category
-categoryRoutes.get("/:id", (req, res) => {
-  res.send("Single Category route");
-});
+categoryRoutes.get("/:id", getCategoryById);
 
 //update category
-categoryRoutes.put("/:id", (req, res) => {
-  res.send("Update Category route");
-});
+categoryRoutes.put("/:id", updateCategory);
 
 //delete category
-categoryRoutes.delete('/:id', (req, res) => {
-  res.send('Delete Category route');
+categoryRoutes.delete("/:id", (req, res) => {
+  res.send("Delete Category route");
 });
 
 export default categoryRoutes;
