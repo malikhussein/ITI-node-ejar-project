@@ -1,0 +1,147 @@
+import joi from 'joi';
+// for the dob
+const today = new Date();
+const minDOB = new Date(today.setFullYear(today.getFullYear() - 15)); // At least 15 years old
+
+
+const signUpJoiSchema = joi.object({
+  userName: joi
+    .string()
+    .min(3)
+    .max(30)
+    .required()
+    .pattern(/^[a-zA-Z0-9_ ]+$/)
+    .messages({
+      'string.min': 'Username must be at least 3 characters long',
+      'string.max': 'Username cannot exceed 30 characters',
+      'string.pattern.base':
+        'Username can only contain letters, numbers, underscores and spaces',
+      'any.required': 'Username is required',
+    }),
+
+  email: joi
+    .string()
+    .email({ tlds: { allow: false } })
+    .required()
+    .messages({
+      'string.email':
+        'Please enter a valid email address (e.g., user@example.com)',
+      'any.required': 'Email is required',
+    }),
+
+  password: joi
+    .string()
+    .min(8)
+    .required()
+    .pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*]).{8,}$/)
+    .messages({
+      'string.min': 'Password must be at least 8 characters long',
+      'string.pattern.base':
+        'Password must contain uppercase, lowercase, number, and special character (!@#$%^&*)',
+      'any.required': 'Password is required',
+    }),
+
+  confirmedPassword: joi
+    .string()
+    .valid(joi.ref('password'))
+    .required()
+    .messages({
+      'any.required': 'Confirm Password is required',
+      'any.only': 'Passwords do not match',
+    }),
+
+  phone: joi
+    .string()
+    .pattern(/^01[0-9]{9}$/)
+    .required()
+    .messages({
+      'string.pattern.base':
+        'Phone number must be an Egyptian number (01xxxxxxxxx)',
+      'any.required': 'Phone number is required',
+    }),
+    
+    dob: joi.date()
+    .less(minDOB)
+    .required()
+    .messages({
+      "date.less": "You must be at least 15 years old",
+      "date.base": "Date of birth must be a valid date",
+      "any.required": "Date of birth is required",
+    }),
+  
+
+  address: joi.string().min(7).max(50).required().messages({
+    'string.min': 'Address should be at least 7 characters',
+    'string.max': 'Address should be at most 50 characters',
+    'any.required': 'Address is required',
+  }),
+
+  idNumber: joi
+    .string()
+    .pattern(/^[2-3][0-9]{13}$/)
+    .required()
+    .messages({
+      'string.pattern.base':
+        'ID Number must start with 2 or 3 and be 14 digits total',
+      'any.required': 'ID Number is required',
+    }),
+
+  gender: joi.string().valid('male', 'female').required().messages({
+    'any.required': 'Gender is required',
+    'any.only': 'Gender must be either "male" or "female"',
+  }),
+
+
+});
+
+// sign In validations schema
+const signInJoiSchema = joi.object({
+    identifier: joi
+      .string()
+      .required()
+      .messages({
+        "any.required": "Email or phone number is required",
+      }),
+  password: joi.string().min(8).required().messages({
+    'string.min': 'Password must be at least 8 characters long',
+    'any.required': 'Password is required',
+  }),
+});
+
+// joi schema for updating user profile he can only update his username, phone, email, and password
+ const updateUserSchema = joi.object({
+  userName: joi
+  .string()
+  .min(3)
+  .max(30)
+  .pattern(/^[a-zA-Z0-9_ ]+$/)
+  .messages({
+    'string.min': 'Username must be at least 3 characters long',
+    'string.max': 'Username cannot exceed 30 characters',
+    'string.pattern.base':
+      'Username can only contain letters, numbers, underscores and spaces',
+  }),
+  phone: joi.string().pattern(/^01[0-9]{9}$/).messages({
+    'string.pattern.base': 'Phone must be a valid Egyptian number (01xxxxxxxxx)',
+  }),
+  password: joi
+  .string()
+  .min(8)
+  .pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*]).{8,}$/)
+  .messages({
+    'string.min': 'Password must be at least 8 characters long',
+    'string.pattern.base':
+      'Password must contain uppercase, lowercase, number, and special character (!@#$%^&*)'
+  }),
+  email: joi
+  .string()
+  .email()
+  .messages({
+    'string.email':
+      'Please enter a valid email address (e.g., user@example.com)',
+  }),
+  
+}).unknown(false); //  Disallow extra fields like role, confirmEmail,etc..
+
+
+export { signUpJoiSchema, signInJoiSchema, updateUserSchema };
