@@ -1,18 +1,14 @@
 import { Router } from "express";
+import { createCategory, getAllCategories } from "../controllers/category.controller.js";
 
 const categoryRoutes = Router();
 
 
 //create category
-categoryRoutes.post("/create", (req, res) => {
-  res.send("Create Category route");
-});
+categoryRoutes.post("/", createCategory);
 
 //get all categories
-categoryRoutes.get("/all", (req, res) => {
-  res.send("All Categories route");
-});
-
+categoryRoutes.get("/", getAllCategories)
 //get single category
 categoryRoutes.get("/:id", (req, res) => {
   res.send("Single Category route");
