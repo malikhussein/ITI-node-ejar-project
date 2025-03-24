@@ -56,7 +56,7 @@ function arrayLimit(val) {
 }
 
 
-rentalSchema.pre("save", function (next) {
+productSchema.pre("save", function (next) {
   if (this.price.daily) {
     this.price.weekly = this.price.daily * 7;  
     this.price.monthly = this.price.daily * 30; 
