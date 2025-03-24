@@ -26,8 +26,9 @@ const productSchema = new Schema({
     required: true,
   },
   price: {
-    type: Number,
-    required: true,
+    daily: { type: Number, required: true }, 
+    weekly: { type: Number }, 
+    monthly: { type: Number } 
   },
   rating: {
     type: Number,
@@ -43,22 +44,7 @@ const productSchema = new Schema({
   //   ref: 'Reviews',
   //   default: 0,
   // },
-  type: {
-    type: String,
-    required: true,
-  },
-  steering: {
-    type: String,
-    required: true,
-  },
-  capacity: {
-    type: String,
-    required: true,
-  },
-  gasoline: {
-    type: String,
-    required: true,
-  },
+
   images: {
     type: [String], 
     validate: [arrayLimit, "You can upload up to 4 images only"],
@@ -68,6 +54,16 @@ const productSchema = new Schema({
 function arrayLimit(val) {
   return val.length <= 4;
 }
+
+
+rentalSchema.pre("save", function (next) {
+  if (this.price.daily) {
+    this.price.weekly = this.price.daily * 7;  
+    this.price.monthly = this.price.daily * 30; 
+  }
+  next();
+});
+
 
 const product = model("Product", productSchema);
 
