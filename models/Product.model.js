@@ -11,6 +11,11 @@ const productSchema = new Schema({
     type: String,
     required: true,
   },
+  category: {
+    type: String,
+    required: true,
+  },
+  
   brand: {
     type: String,
     required: true,
@@ -27,11 +32,16 @@ const productSchema = new Schema({
     type: Number,
     default: 0,
   },
-  reviews: {
-    type: Schema.Types.ObjectId,
-    ref: 'Reviews',
-    default: 0,
+
+    reviews: {
+      type: Number,
+      default: 0,
   },
+  // reviews: {
+  //   type: Schema.Types.ObjectId,
+  //   ref: 'Reviews',
+  //   default: 0,
+  // },
   type: {
     type: String,
     required: true,

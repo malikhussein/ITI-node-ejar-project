@@ -26,6 +26,7 @@ export const addProduct = async (req, res) => {
       name,
       brand,
       description,
+      category,
       price,
       rating,
       reviews,
@@ -33,6 +34,7 @@ export const addProduct = async (req, res) => {
       steering,
       capacity,
       gasoline,
+      renterId
     } = req.body;
 
     if (!req.files || req.files.length === 0) {
@@ -61,7 +63,9 @@ export const addProduct = async (req, res) => {
 
     const newProduct = new Product({
       name,
+      renterId,
       brand,
+      category,
       description,
       price,
       rating,
@@ -143,17 +147,26 @@ export const updateProduct = async (req, res) => {
 
 
 export const getAllProducts = async (req, res) => {
-  const Products = await Product.find();
+  try {
+    const { category } = req.query; 
 
-  res.status(200).json({
-    status: "success",
-    results: Products.length,
+    const filter = category ? { category } : {}; 
+    const products = await Product.find(filter); 
 
-    data: {
-      Products,
-    },
-  });
+    res.status(200).json({
+      status: "success",
+      results: products.length,
+      data: products,
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: "error",
+      message: "Something went wrong",
+      error: error.message,
+    });
+  }
 };
+
 
 
 
@@ -194,15 +207,4 @@ export const removeProduct = async (req, res) => {
   }
 };
 
-export const getAllProductsByCategory = async (req, res) => {
-  const Products = await Product.find();
 
-  res.status(200).json({
-    status: "success",
-    results: Products.length,
-
-    data: {
-      Products,
-    },
-  });
-};
