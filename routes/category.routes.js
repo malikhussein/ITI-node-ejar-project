@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
   createCategory,
+  deleteCategory,
   getAllCategories,
   getCategoryById,
   updateCategory,
@@ -20,8 +21,6 @@ categoryRoutes.get("/:id", getCategoryById);
 categoryRoutes.put("/:id", updateCategory);
 
 //delete category
-categoryRoutes.delete("/:id", (req, res) => {
-  res.send("Delete Category route");
-});
+categoryRoutes.delete("/:id", deleteCategory);
 
 export default categoryRoutes;

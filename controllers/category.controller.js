@@ -59,22 +59,29 @@ export const getCategoryById = async (req, res) => {
 };
 
 
+
 export const updateCategory = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const { name, description, icon } = req.body;
-
-    if (!name || !description || !icon) {
+    if (!req.body || Object.keys(req.body).length === 0) {
       return res.status(400).json({
         success: false,
-        message: "Name, description, and icon are required",
+        message: "Request body is required and cannot be empty",
       });
     }
 
+    const { name, description, icon } = req.body;
+
+    const updateFields = {};
+    if (name !== undefined) updateFields.name = name.trim();
+    if (description !== undefined) updateFields.description = description.trim();
+    if (icon !== undefined) updateFields.icon = icon.trim();
+
+    
     const updatedCategory = await CategoryModel.findByIdAndUpdate(
       id,
-      { name, description, icon },
+      updateFields,
       { new: true, runValidators: true }
     );
 
@@ -106,6 +113,41 @@ export const updateCategory = async (req, res) => {
     res.status(400).json({
       success: false,
       message: error.message || "Failed to update category",
+    });
+  }
+};
+
+
+// Delete Category
+export const deleteCategory = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const deletedCategory = await CategoryModel.findByIdAndDelete(id);
+
+    if (!deletedCategory) {
+      return res.status(404).json({
+        success: false,
+        message: "Category not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Category deleted successfully",
+    });
+  } catch (error) {
+
+    if (error.name === "CastError") {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid Category ID",
+      });
+    }
+
+    res.status(500).json({
+      success: false,
+      message: error.message || "Failed to delete category",
     });
   }
 };
