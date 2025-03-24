@@ -8,5 +8,6 @@ const mainRouter = Router();
 mainRouter.use('/category', categoryRoutes);
 mainRouter.use('/auth', authRoutes);
 mainRouter.use('/user', userRoutes);
+mainRouter.use('/review', authRoutes);
 
 export default mainRouter;
