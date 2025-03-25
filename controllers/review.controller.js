@@ -27,45 +27,58 @@ const getReviewById = async (req, res) => {
   }
 };
 
+
 const createReview = async (req, res) => {
-    
-    //TODO: check if it is the user who created the review
-
-  const { id: userid } = req.user;
-
-  if (!user) {
-    return res.status(404).json({ message: "user does not exist" });
-  }
-
-  const { rating, comment } = req.body;
-
-  if (!rating || !comment) {
-    return res.status(401).json({ message: "please complete all fields" });
-  }
-
-  const user = await userModel.findById(userid);
-
-  const name = user.userName;
-
   try {
-    const reviewAded = reviewModel.create({ name, rating, comment });
+    const { id: userid } = req.user;
+
+    const user = await userModel.findById(userid);
+
+    if (!user) {
+      return res.status(404).json({ message: "user does not exist" });
+    }
+
+    const { rating, comment } = req.body;
+
+    if (!rating || !comment) {
+      return res.status(400).json({ message: "please complete all fields" });
+    }
+
+    const name = user.userName;
+
+    const reviewAded = await reviewModel.create({
+      name,
+      rating,
+      comment,
+      createdBy: userid,
+    });
 
     return res.status(201).json({ reviewAded });
   } catch (error) {
-    return res.status(400).json({ error: error.message });
+    return res.status(500).json({ error: error.message });
   }
 };
 
+
+  //TODO: check if it is the user who created the review
+
 const updateReview = async (req, res) => {
 
-    //TODO: check if it is the user who created the review
-
   const { id: reviewId } = req.params;
+
+  const { id: userid } = req.user;
 
   const { rating, comment } = req.body;
 
   try {
-    const foundedReview = reviewModel.findByIdAndUpdate(
+
+      const authUser= await reviewModel.findOne({createdBy:userid})
+
+      if (!authUser) {
+        return res.status(401).json({ message: "you are not authorized" });
+      }
+
+    const foundedReview = await reviewModel.findByIdAndUpdate(
       reviewId,
       { rating, comment },
       { new: true }

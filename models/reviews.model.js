@@ -19,6 +19,11 @@ const reviewShema = new mongoose.Schema({
         type:Schema.Types.ObjectId,
         ref:"process"
     },
+    createdBy: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        required: true,
+      }
     
     /*
     image :{
