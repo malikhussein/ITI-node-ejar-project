@@ -7,10 +7,11 @@ import {
   updateProduct,
   upload,
 } from "../controllers/product.controller.js";
+import authMiddleware from "../middleware/auth.middleware.js";
 
 const Productrouter = Router();
 
-Productrouter.post("/", upload, addProduct);
+Productrouter.post("/", authMiddleware,upload, addProduct);
 Productrouter.post("/:id", upload, updateProduct);
 Productrouter.get("/:id", getoneProduct);
 Productrouter.get("/", getAllProducts);

@@ -26,14 +26,14 @@ export const addProduct = async (req, res) => {
       name,
       brand,
       description,
+      category,
       price,
       rating,
       reviews,
-      type,
-      steering,
-      capacity,
-      gasoline,
+      renterId
     } = req.body;
+
+    
 
     if (!req.files || req.files.length === 0) {
       return res
@@ -54,22 +54,17 @@ export const addProduct = async (req, res) => {
         .json({ status: "fail", message: "Please upload at least one image." });
     }
     const imageUrls = req.files.map((file) => file.path);
-    console.log("✅ Uploaded Files:", req.files);
-    console.log(imageUrls);
 
-    console.log("hello");
 
     const newProduct = new Product({
       name,
+      renterId:req.user.id,
       brand,
+      category,
       description,
       price,
       rating,
       reviews,
-      type,
-      steering,
-      capacity,
-      gasoline,
       images: imageUrls,
     });
 
@@ -143,17 +138,26 @@ export const updateProduct = async (req, res) => {
 
 
 export const getAllProducts = async (req, res) => {
-  const Products = await Product.find();
+  try {
+    const { category } = req.query; 
 
-  res.status(200).json({
-    status: "success",
-    results: Products.length,
+    const filter = category ? { category } : {}; 
+    const products = await Product.find(filter); 
 
-    data: {
-      Products,
-    },
-  });
+    res.status(200).json({
+      status: "success",
+      results: products.length,
+      data: products,
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: "error",
+      message: "Something went wrong",
+      error: error.message,
+    });
+  }
 };
+
 
 
 
@@ -194,15 +198,4 @@ export const removeProduct = async (req, res) => {
   }
 };
 
-export const getAllProductsByCategory = async (req, res) => {
-  const Products = await Product.find();
 
-  res.status(200).json({
-    status: "success",
-    results: Products.length,
-
-    data: {
-      Products,
-    },
-  });
-};
