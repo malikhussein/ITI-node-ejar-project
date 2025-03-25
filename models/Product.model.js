@@ -37,6 +37,11 @@ const productSchema = new Schema(
       type: Number,
       required: true,
     },
+    weekly: {
+      type: Number,
+    },    monthly: {
+      type: Number,
+    },
     rating: {
       type: Number,
       default: 0,
@@ -66,13 +71,13 @@ productSchema.pre(/^find/, function (next) {
   next();
 });
 
-// productSchema.pre("save", function (next) {
-//   if (this.daily) {
-//     this.weekly = this.daily * 7;  
-//     this.monthly = this.daily * 30; 
-//   }
-//   next();
-// });
+productSchema.pre("save", function (next) {
+  if (this.daily) {
+    this.weekly = this.daily * 7;  
+    this.monthly = this.daily * 30; 
+  }
+  next();
+});
 
 
 const product = model("Product", productSchema);
