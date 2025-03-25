@@ -1,4 +1,5 @@
 import CategoryModel from "../models/category.model.js";
+import ProductModel from "../models/Product.model.js";
 
 export const createCategory = async (req, res) => {
   try {
@@ -28,10 +29,21 @@ export const getAllCategories = async (req, res) => {
   try {
     const categories = await CategoryModel.find();
 
+    // all categories with items
+    const categoriesWithProducts = await Promise.all(
+      categories.map(async (category) => {
+        const products = await ProductModel.find({ category: category._id });
+        return {
+          ...category._doc, 
+          products,
+        };
+      })
+    );
+
     res.status(200).json({
       success: true,
-      data: categories,
-      message: "All Categories",
+      data: categoriesWithProducts,
+      message: "All Categories with Products",
     });
   } catch (error) {
     res.status(400).json({
@@ -45,10 +57,23 @@ export const getCategoryById = async (req, res) => {
   try {
     const category = await CategoryModel.findById(req.params.id);
 
+    if (!category) {
+      return res.status(404).json({
+        success: false,
+        message: "Category not found",
+      });
+    }
+
+   // related items
+    const products = await ProductModel.find({ category: category._id });
+
     res.status(200).json({
       success: true,
-      data: category,
-      message: "Category found",
+      data: {
+        ...category._doc, 
+        products, //category items
+      },
+      message: "Category found with products",
     });
   } catch (error) {
     res.status(400).json({
