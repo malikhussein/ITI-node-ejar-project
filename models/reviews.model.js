@@ -1,4 +1,4 @@
-import { ref } from "joi";
+import mongoose, { Schema } from "mongoose";
 
 const reviewShema = new mongoose.Schema({
     name: {
@@ -15,12 +15,20 @@ const reviewShema = new mongoose.Schema({
         type: String,
         required: [true, 'Comment is required'],
     },
+    processId:{
+        type:Schema.Types.ObjectId,
+        ref:"process"
+    },
+    
+    /*
     image :{
         type: String,
         required: [true, 'Image is required'],
         ref: 'User',
-    }
+    }*/
+
 }, { timestamps: true });
 
 const reviewModel = mongoose.model('Reviews', reviewShema);
 export default reviewModel;
+
