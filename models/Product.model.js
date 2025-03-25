@@ -16,6 +16,17 @@ const productSchema = new Schema({
     ref: 'Category',
     required: true,
   },
+  status :{
+ type :String,
+ required: true,
+ default :'available'
+
+  },
+  comfirmed:{
+type :Boolean,
+default :false
+
+  },
   
   brand: {
     type: String,

@@ -30,12 +30,10 @@ export const addProduct = async (req, res) => {
       price,
       rating,
       reviews,
-      type,
-      steering,
-      capacity,
-      gasoline,
       renterId
     } = req.body;
+
+    
 
     if (!req.files || req.files.length === 0) {
       return res
@@ -56,24 +54,17 @@ export const addProduct = async (req, res) => {
         .json({ status: "fail", message: "Please upload at least one image." });
     }
     const imageUrls = req.files.map((file) => file.path);
-    console.log("✅ Uploaded Files:", req.files);
-    console.log(imageUrls);
 
-    console.log("hello");
 
     const newProduct = new Product({
       name,
-      renterId,
+      renterId:req.user.id,
       brand,
       category,
       description,
       price,
       rating,
       reviews,
-      type,
-      steering,
-      capacity,
-      gasoline,
       images: imageUrls,
     });
 
