@@ -27,10 +27,10 @@ export const addProduct = async (req, res) => {
       brand,
       description,
       category,
-      price,
+      daily,
       rating,
       reviews,
-      renterId
+    
     } = req.body;
 
     
@@ -62,7 +62,7 @@ export const addProduct = async (req, res) => {
       brand,
       category,
       description,
-      price,
+      daily,
       rating,
       reviews,
       images: imageUrls,
@@ -86,13 +86,14 @@ export const updateProduct = async (req, res) => {
       name,
       brand,
       description,
-      price,
+      daily,
       rating,
       reviews,
       type,
       steering,
       capacity,
       gasoline,
+      images,
       removeImages,
     } = req.body;
 
@@ -115,13 +116,14 @@ export const updateProduct = async (req, res) => {
     product.name = name || product.name;
     product.brand = brand || product.brand;
     product.description = description || product.description;
-    product.price = price || product.price;
+    product.daily = daily || product.daily;
     product.rating = rating || product.rating;
     product.reviews = reviews || product.reviews;
     product.type = type || product.type;
     product.steering = steering || product.steering;
     product.capacity = capacity || product.capacity;
     product.gasoline = gasoline || product.gasoline;
+    product.images = images || product.images;
 
     await product.save();
 
@@ -161,25 +163,29 @@ export const getAllProducts = async (req, res) => {
 
 
 
-export const getoneProduct = async (req, res) => {
+export const getOneProduct = async (req, res) => {
   try {
     let prodid = req.params.id;
     if (!prodid) {
       return res
-        .status(404)
-        .json({ status: "fail", message: "invalid product id" });
+        .status(400) 
+        .json({ status: "fail", message: "Invalid product ID" });
     }
 
-    let theproduct = await Product.findById(prodid);
+    let theproduct = await Product.findById(prodid)
+      .populate("category", "name") 
+      .populate("renterId", "username email"); 
+
     if (!theproduct) {
-      res.status(404).json({ status: "fail", message: "product Not Found" });
+      return res.status(404).json({ status: "fail", message: "Product Not Found" });
     }
 
     res.status(200).json({ status: "success", data: theproduct });
   } catch (error) {
-    res.status(400).json({ status: "fail", message: error.message });
+    res.status(500).json({ status: "error", message: error.message });
   }
 };
+
 
 export const removeProduct = async (req, res) => {
   try {

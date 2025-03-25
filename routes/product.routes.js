@@ -2,7 +2,7 @@ import { Router } from "express";
 import {
   addProduct,
   getAllProducts,
-  getoneProduct,
+  getOneProduct,
   removeProduct,
   updateProduct,
   upload,
@@ -13,7 +13,7 @@ const Productrouter = Router();
 
 Productrouter.post("/", authMiddleware,upload, addProduct);
 Productrouter.post("/:id", upload, updateProduct);
-Productrouter.get("/:id", getoneProduct);
+Productrouter.get("/:id", getOneProduct);
 Productrouter.get("/", getAllProducts);
 Productrouter.delete("/:id", removeProduct);
 
