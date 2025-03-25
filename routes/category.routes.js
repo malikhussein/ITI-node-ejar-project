@@ -14,6 +14,7 @@ categoryRoutes.post("/", createCategory);
 
 //get all categories
 categoryRoutes.get("/", getAllCategories);
+
 //get single category
 categoryRoutes.get("/:id", getCategoryById);
 
