@@ -1,8 +1,8 @@
 import joi from 'joi';
 // for the dob
 const today = new Date();
-const minDOB = new Date(today.setFullYear(today.getFullYear() - 15)); // At least 15 years old
-
+const minDOB = new Date(today.getFullYear() - 15, today.getMonth(), today.getDate()); // At least 15 years old
+const maxDOB = new Date(today.getFullYear() - 70, today.getMonth(), today.getDate()); // Max 70 years old
 
 const signUpJoiSchema = joi.object({
   userName: joi
@@ -61,13 +61,18 @@ const signUpJoiSchema = joi.object({
     }),
     
     dob: joi.date()
+    //not older than 70
+  .greater(maxDOB)
+    //at least 15 years old
     .less(minDOB)
     .required()
     .messages({
+      "date.greater": "You must not be older than 70 years old",
       "date.less": "You must be at least 15 years old",
       "date.base": "Date of birth must be a valid date",
       "any.required": "Date of birth is required",
     }),
+  
   
 
   address: joi.string().min(7).max(50).required().messages({
