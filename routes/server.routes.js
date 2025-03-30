@@ -4,13 +4,15 @@ import authRoutes from './auth.routes.js';
 import userRoutes from './user.routes.js';
 import reviewRoutes from './review.routes.js';
 import Productrouter from './product.routes.js';
+import processRouter from './process.routes.js';
 
 const mainRouter = Router();
-mainRouter.use("/product", Productrouter);
+mainRouter.use('/product', Productrouter);
 
 mainRouter.use('/category', categoryRoutes);
 mainRouter.use('/auth', authRoutes);
 mainRouter.use('/user', userRoutes);
 mainRouter.use('/review', reviewRoutes);
+mainRouter.use('/process', processRouter);
 
 export default mainRouter;
