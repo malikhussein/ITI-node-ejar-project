@@ -3,10 +3,9 @@ import ProductModel from "../models/Product.model.js";
 
 export const createCategory = async (req, res) => {
   try {
-    const { name, description, icon } = req.body;
+    const { name, icon } = req.body;
     const newCategory = new CategoryModel({
       name,
-      description,
       icon,
     });
 
@@ -29,21 +28,10 @@ export const getAllCategories = async (req, res) => {
   try {
     const categories = await CategoryModel.find();
 
-    // all categories with items
-    const categoriesWithProducts = await Promise.all(
-      categories.map(async (category) => {
-        const products = await ProductModel.find({ category: category._id });
-        return {
-          ...category._doc, 
-          products,
-        };
-      })
-    );
-
     res.status(200).json({
       success: true,
-      data: categoriesWithProducts,
-      message: "All Categories with Products",
+      data: categories,
+      message: "All Categories",
     });
   } catch (error) {
     res.status(400).json({
@@ -64,14 +52,15 @@ export const getCategoryById = async (req, res) => {
       });
     }
 
-   // related items
+    // related items
     const products = await ProductModel.find({ category: category._id });
-
+    const results = products.length;
     res.status(200).json({
       success: true,
       data: {
-        ...category._doc, 
-        products, //category items
+        ...category._doc,
+        products,
+        results,
       },
       message: "Category found with products",
     });
@@ -82,8 +71,6 @@ export const getCategoryById = async (req, res) => {
     });
   }
 };
-
-
 
 export const updateCategory = async (req, res) => {
   try {
@@ -96,14 +83,12 @@ export const updateCategory = async (req, res) => {
       });
     }
 
-    const { name, description, icon } = req.body;
+    const { name, icon } = req.body;
 
     const updateFields = {};
     if (name !== undefined) updateFields.name = name.trim();
-    if (description !== undefined) updateFields.description = description.trim();
     if (icon !== undefined) updateFields.icon = icon.trim();
 
-    
     const updatedCategory = await CategoryModel.findByIdAndUpdate(
       id,
       updateFields,
@@ -142,7 +127,6 @@ export const updateCategory = async (req, res) => {
   }
 };
 
-
 // Delete Category
 export const deleteCategory = async (req, res) => {
   try {
@@ -162,7 +146,6 @@ export const deleteCategory = async (req, res) => {
       message: "Category deleted successfully",
     });
   } catch (error) {
-
     if (error.name === "CastError") {
       return res.status(400).json({
         success: false,
