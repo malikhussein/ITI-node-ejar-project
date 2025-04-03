@@ -19,18 +19,22 @@ const reviewShema = new mongoose.Schema({
         type:Schema.Types.ObjectId,
         ref:"process"
     },
+    prodid:{
+        type:Schema.Types.ObjectId,
+        ref:"Product",
+        required: [true, 'Comment is required'],
+
+    },
     createdBy: {
         type: Schema.Types.ObjectId,
         ref: 'User',
         required: true,
-      }
-    
-    /*
+      },
     image :{
         type: String,
         required: [true, 'Image is required'],
         ref: 'User',
-    }*/
+    }
 
 }, { timestamps: true });
 

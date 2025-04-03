@@ -144,7 +144,7 @@ export const getAllProducts = async (req, res) => {
     const { category } = req.query; 
 
     const filter = category ? { category } : {}; 
-    const products = await Product.find(filter); 
+    const products = await Product.find(filter).populate('review'); 
 
     res.status(200).json({
       status: "success",
@@ -174,7 +174,7 @@ export const getOneProduct = async (req, res) => {
 
     let theproduct = await Product.findById(prodid)
       .populate("category", "name") 
-      .populate("renterId", "username email"); 
+      .populate("renterId", "username email").populate('review'); 
 
     if (!theproduct) {
       return res.status(404).json({ status: "fail", message: "Product Not Found" });

@@ -38,7 +38,7 @@ const createReview = async (req, res) => {
       return res.status(404).json({ message: "user does not exist" });
     }
 
-    const { rating, comment } = req.body;
+    const { rating, comment , prodid } = req.body;
 
     if (!rating || !comment) {
       return res.status(400).json({ message: "please complete all fields" });
@@ -51,6 +51,7 @@ const createReview = async (req, res) => {
       rating,
       comment,
       createdBy: userid,
+      prodid
     });
 
     return res.status(201).json({ reviewAded });

@@ -18,8 +18,9 @@ const productSchema = new Schema(
     },
     status: {
       type: String,
+      enum: ["available", "rented", "unavailable"], 
       required: true,
-      default: "available",
+      default: "Available", 
     },
     confirmed: {
       type: Boolean,
@@ -28,6 +29,9 @@ const productSchema = new Schema(
     brand: {
       type: String,
       required: true,
+    },
+    rentedFor: {
+      type: String,
     },
     description: {
       type: String,
@@ -42,14 +46,7 @@ const productSchema = new Schema(
     },    monthly: {
       type: Number,
     },
-    rating: {
-      type: Number,
-      default: 0,
-    },
-    reviews: {
-      type: Number,
-      default: 0,
-    },
+
     images: {
       type: [String],
       validate: [arrayLimit, "You can upload up to 4 images only"],
@@ -78,6 +75,21 @@ productSchema.pre("save", function (next) {
   }
   next();
 });
+
+
+productSchema.virtual('review', {
+  ref: 'Reviews',
+  foreignField: 'prodid',
+  localField: '_id',
+});
+productSchema.virtual('averageRating').get(function () {
+  if (!this.review || this.review.length === 0) return 0; 
+
+  const totalRating = this.review.reduce((sum, rev) => sum + rev.rating, 0);
+  return Math.round(totalRating / this.review.length); 
+});
+
+
 
 
 const product = model("Product", productSchema);
