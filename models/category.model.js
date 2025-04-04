@@ -17,6 +17,20 @@ const categorySchema = new Schema(
   { timestamps: true }
 );
 
+categorySchema.pre("save", function (next) {
+  this.name = this.name.toLowerCase();
+  next();
+});
+
+categorySchema.pre("findOneAndUpdate", function (next) {
+  const update = this.getUpdate();
+  if (update.name) {
+    update.name = update.name.toLowerCase();
+    this.setUpdate(update);
+  }
+  next();
+});
+
 const CategoryModel = model("Category", categorySchema);
 
 export default CategoryModel;
