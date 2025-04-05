@@ -22,18 +22,8 @@ const storage = new CloudinaryStorage({
 export const upload = multer({ storage }).array("images", 4);
 export const addProduct = async (req, res) => {
   try {
-    const {
-      name,
-      brand,
-      description,
-      category,
-      daily,
-      rating,
-      reviews,
-    
-    } = req.body;
-
-    
+    const { name, brand, description, category, daily, rating, reviews } =
+      req.body;
 
     if (!req.files || req.files.length === 0) {
       return res
@@ -55,10 +45,9 @@ export const addProduct = async (req, res) => {
     }
     const imageUrls = req.files.map((file) => file.path);
 
-
     const newProduct = new Product({
       name,
-      renterId:req.user.id,
+      renterId: req.user.id,
       brand,
       category,
       description,
@@ -95,6 +84,8 @@ export const updateProduct = async (req, res) => {
       gasoline,
       images,
       removeImages,
+      confirmed,
+      confirmMessage,
     } = req.body;
 
     let product = await Product.findById(id);
@@ -105,7 +96,9 @@ export const updateProduct = async (req, res) => {
     }
 
     if (removeImages && removeImages.length > 0) {
-      product.images = product.images.filter((img) => !removeImages.includes(img));
+      product.images = product.images.filter(
+        (img) => !removeImages.includes(img)
+      );
     }
 
     if (req.files && req.files.length > 0) {
@@ -124,6 +117,8 @@ export const updateProduct = async (req, res) => {
     product.capacity = capacity || product.capacity;
     product.gasoline = gasoline || product.gasoline;
     product.images = images || product.images;
+    product.confirmMessage = confirmMessage || product.confirmMessage;
+    product.confirmed = confirmed;
 
     await product.save();
 
@@ -138,13 +133,12 @@ export const updateProduct = async (req, res) => {
   }
 };
 
-
 export const getAllProducts = async (req, res) => {
   try {
-    const { category } = req.query; 
+    const { category } = req.query;
 
-    const filter = category ? { category } : {}; 
-    const products = await Product.find(filter).populate('review'); 
+    const filter = category ? { category } : {};
+    const products = await Product.find(filter).populate("review");
 
     res.status(200).json({
       status: "success",
@@ -160,24 +154,24 @@ export const getAllProducts = async (req, res) => {
   }
 };
 
-
-
-
 export const getOneProduct = async (req, res) => {
   try {
     let prodid = req.params.id;
     if (!prodid) {
       return res
-        .status(400) 
+        .status(400)
         .json({ status: "fail", message: "Invalid product ID" });
     }
 
     let theproduct = await Product.findById(prodid)
-      .populate("category", "name") 
-      .populate("renterId", "username email").populate('review'); 
+      .populate("category", "name")
+      .populate("renterId", "username email")
+      .populate("review");
 
     if (!theproduct) {
-      return res.status(404).json({ status: "fail", message: "Product Not Found" });
+      return res
+        .status(404)
+        .json({ status: "fail", message: "Product Not Found" });
     }
 
     res.status(200).json({ status: "success", data: theproduct });
@@ -185,7 +179,6 @@ export const getOneProduct = async (req, res) => {
     res.status(500).json({ status: "error", message: error.message });
   }
 };
-
 
 export const removeProduct = async (req, res) => {
   try {
@@ -203,5 +196,3 @@ export const removeProduct = async (req, res) => {
     res.status(400).json({ status: "fail", message: error.message });
   }
 };
-
-

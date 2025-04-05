@@ -18,13 +18,17 @@ const productSchema = new Schema(
     },
     status: {
       type: String,
-      enum: ["available", "rented", "unavailable"], 
+      enum: ["available", "rented", "unavailable"],
       required: true,
-      default: "Available", 
+      default: "available",
     },
     confirmed: {
       type: Boolean,
       default: false,
+    },
+    confirmMessage: {
+      type: String,
+      default: "",
     },
     brand: {
       type: String,
@@ -43,7 +47,8 @@ const productSchema = new Schema(
     },
     weekly: {
       type: Number,
-    },    monthly: {
+    },
+    monthly: {
       type: Number,
     },
 
@@ -53,6 +58,7 @@ const productSchema = new Schema(
     },
   },
   {
+    timestamps: true,
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
     versionKey: false,
@@ -63,34 +69,32 @@ function arrayLimit(val) {
 }
 
 productSchema.pre(/^find/, function (next) {
-  this.populate({ path: "category", select: "name" })
-      .populate({ path: "renterId", select: " userName  _id" });
+  this.populate({ path: "category", select: "name" }).populate({
+    path: "renterId",
+    select: " userName  _id",
+  });
   next();
 });
 
 productSchema.pre("save", function (next) {
   if (this.daily) {
-    this.weekly = this.daily * 7;  
-    this.monthly = this.daily * 30; 
+    this.weekly = this.daily * 7;
+    this.monthly = this.daily * 30;
   }
   next();
 });
 
-
-productSchema.virtual('review', {
-  ref: 'Reviews',
-  foreignField: 'prodid',
-  localField: '_id',
+productSchema.virtual("review", {
+  ref: "Reviews",
+  foreignField: "prodid",
+  localField: "_id",
 });
-productSchema.virtual('averageRating').get(function () {
-  if (!this.review || this.review.length === 0) return 0; 
+productSchema.virtual("averageRating").get(function () {
+  if (!this.review || this.review.length === 0) return 0;
 
   const totalRating = this.review.reduce((sum, rev) => sum + rev.rating, 0);
-  return Math.round(totalRating / this.review.length); 
+  return Math.round(totalRating / this.review.length);
 });
-
-
-
 
 const product = model("Product", productSchema);
 
