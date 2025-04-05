@@ -17,6 +17,9 @@ app.get('/', (req, res) => {
 });
 
 app.use('/api', mainRouter);
+app.use('/uploads/profile-pictures', express.static('uploads/profile-pictures')); // Serve static files to acess the photos
+app.use('/uploads/id-pictures', express.static('uploads/id-pictures'));
+ 
 app.all('*', (req, res) => {
   return res.status(404).send('API route not found');
 });
