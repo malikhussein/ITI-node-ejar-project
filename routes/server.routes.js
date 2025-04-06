@@ -5,6 +5,8 @@ import userRoutes from './user.routes.js';
 import reviewRoutes from './review.routes.js';
 import Productrouter from './product.routes.js';
 import processRouter from './process.routes.js';
+import chatRouter from './chat.routes.js';
+import messageRouter from './message.routes.js';
 
 const mainRouter = Router();
 mainRouter.use('/product', Productrouter);
@@ -14,5 +16,7 @@ mainRouter.use('/auth', authRoutes);
 mainRouter.use('/user', userRoutes);
 mainRouter.use('/review', reviewRoutes);
 mainRouter.use('/process', processRouter);
+mainRouter.use('/chat', chatRouter);
+mainRouter.use('/message', messageRouter);
 
 export default mainRouter;

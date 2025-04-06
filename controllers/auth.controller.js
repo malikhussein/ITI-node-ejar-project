@@ -50,6 +50,7 @@ const register = async (req, res) => {
       idPictureFrontPath: frontPath,
       idPictureBackPath: backPath,
       role: "user", //  always "user"
+      isVerified: false,
     });
 
     const objectUser = user.toObject();
@@ -103,9 +104,9 @@ const login = async (req, res) => {
       return res.status(400).json({ message: "Invalid password." });
     }
 
-    const token = jwt.sign({ id: user._id, role: user.role }, process.env.TOKEN_SECRET_KEY, { expiresIn: "10h" });
+    const token = jwt.sign({ id: user._id, role: user.role, isVerified: user.isVerified }, process.env.TOKEN_SECRET_KEY, { expiresIn: "20h" });
 
-    return res.status(200).json({ message: "Login successful.", token });
+    return res.status(200).json({ message: "Login successful.", token , isVerified: user.isVerified,});
 
   } catch (error) {
     console.error("🔥 Internal Server Error:", error.message);
