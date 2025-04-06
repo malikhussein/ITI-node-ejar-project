@@ -138,7 +138,10 @@ export const getAllProducts = async (req, res) => {
     const { category } = req.query;
 
     const filter = category ? { category } : {};
-    const products = await Product.find(filter).populate("review");
+    const products = await Product.find(filter)
+      .populate("category", "name")
+      .populate("renterId", "username email")
+      .populate("review");
 
     res.status(200).json({
       status: "success",
