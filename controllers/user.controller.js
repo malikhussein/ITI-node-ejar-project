@@ -266,3 +266,30 @@ export const deleteUser = async (req, res) => {
     });
   }
 };
+
+/**
+ * TOGGLE USER VERIFICATION STATUS (BY ADMIN ONLY)
+ * PATCH /api/users/:id/verification
+ */
+export const toggleVerification = async (req, res) => {
+  try {
+    if (req.user.role !== 'admin') {
+      return res.status(403).json({ message: "Not authorized" });
+    }
+
+    const { id } = req.params;
+    const user = await userModel.findById(id);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    user.isVerified = !user.isVerified; //  Toggle the value
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: `User verification status updated`,
+      isVerified: user.isVerified,
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Error toggling verification", error: error.message });
+  }
+};
