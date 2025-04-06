@@ -7,12 +7,16 @@ import {
   deleteAllUsers,
   deleteUser,
   searchUser,
+  toggleVerification,
 } from '../controllers/user.controller.js';
 import uploadProfilePicture from '../middleware/profilePictureUpload.middleware.js';
 import {
   getProfilePicture,
   updateProfilePicture,
 } from '../controllers/updateProfilePicture.controller.js';
+// import { requireVerification } from '../middleware/verification.middleware.js';  //  Only verified users can do etc..
+// middleware after authMiddleware //  to check if the user is verified before allowing access to certain routes(requireVerification)
+
 const userRoutes = Router();
 
 // Route to update user profile picture
@@ -20,10 +24,14 @@ const userRoutes = Router();
 userRoutes.put('/upload-profile-picture',authMiddleware, uploadProfilePicture.single('profilePicture'),updateProfilePicture);
 userRoutes.get('/profile-picture', authMiddleware, getProfilePicture);
 userRoutes.get('/', authMiddleware, getAllUsers);
-userRoutes.get('/:id', authMiddleware, getUserById);
+userRoutes.get('/:id', authMiddleware,getUserById);
 userRoutes.post('/search', authMiddleware, searchUser);
 userRoutes.put('/:id', authMiddleware, updateUser);
 userRoutes.delete('/', authMiddleware, deleteAllUsers);
 userRoutes.delete('/:id', authMiddleware, deleteUser);
+
+// Route to toggle user verification status by Admin Only
+userRoutes.patch('/toggle-verification/:id', authMiddleware, toggleVerification);
+
 
 export default userRoutes;
