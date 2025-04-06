@@ -20,6 +20,8 @@ const userSchema = new Schema({
   address:  { type: String, required: [true, 'Address is required'] },
   idNumber: { type: String, required: [true, 'Nation Id number is required'], unique: true },
   gender:   { type: String, enum: ['male', 'female'], required: true },
+  isVerified: { type: Boolean, default: false }, 
+
   role: {
     type: String,
     enum: Object.values(roleType), // Retrieve all values from the roleType object
