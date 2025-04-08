@@ -27,6 +27,22 @@ export default class Process {
         return res.status(404).json({ message: 'product does not exist' });
       }
 
+      // * Check if the user is the owner of the product
+      if (userId === product.renterId.toString()) {
+        return res.status(403).json({ message: 'you are the owner' });
+      }
+
+      // * Check if the user already has a process for this product
+      const existingProcess = await processModel.findOne({
+        productId,
+        renterId: userId,
+      });
+      if (existingProcess) {
+        return res.status(400).json({
+          message: 'you already have a process for this product',
+        });
+      }
+
       // * Get the values from the body
       const { startDate, endDate, price } = req.body;
 
@@ -67,12 +83,52 @@ export default class Process {
         return res.status(403).json({ message: 'unauthorized user' });
       }
 
-      const processes = await processModel.find();
+      const processes = await processModel
+        .find()
+        .populate('productId', '_id name images')
+        .populate('renterId', '_id userName');
 
-      // * Check if there is any processes
-      if (processes.length <= 0) {
-        return res.status(404).json({ message: 'no processes were found' });
+      return res.status(200).json(processes);
+    } catch (error) {
+      return res
+        .status(500)
+        .json({ message: error.message || 'internal server error' });
+    }
+  }
+
+  static async getUserProcesses(req, res) {
+    try {
+      // * Check if request is authenticated
+      if (!req.user) {
+        return res.status(401).json({ message: 'no token provided' });
       }
+
+      const { id: userId, role: userRole } = req.user;
+
+      // * Check if the user sending the request exists
+      const user = await userModel.findById(userId);
+
+      if (!user) {
+        return res.status(404).json({ message: 'user does not exist' });
+      }
+
+      // * Check if the user is an admin or the same user
+      if (userRole !== 'admin' && user._id.toString() !== userId) {
+        return res.status(403).json({ message: 'unauthorized user' });
+      }
+
+      const products = await productModel.find({ renterId: userId });
+      if (products.length <= 0) {
+        return res.status(404).json({ message: 'no products were found' });
+      }
+
+      const processes = await processModel
+        .find({
+          productId: { $in: products.map((product) => product._id) },
+          status: 'pending',
+        })
+        .populate('productId', '_id name images')
+        .populate('renterId', '_id userName');
 
       return res.status(200).json(processes);
     } catch (error) {
@@ -99,7 +155,10 @@ export default class Process {
 
       // * Check if the process exists
       const { id: processId } = req.params;
-      const process = await processModel.findById(processId);
+      const process = await processModel
+        .findById(processId)
+        .populate('productId', '_id name images')
+        .populate('renterId', '_id userName');
       if (!process) {
         return res.status(404).json({ message: 'process does not exist' });
       }
@@ -137,16 +196,23 @@ export default class Process {
         return res.status(404).json({ message: 'user does not exist' });
       }
 
-      // * Check if the user is an admin
-      if (userRole !== 'admin') {
-        return res.status(403).json({ message: 'unauthorized user' });
-      }
-
       // * Check if the process exists
       const { id: processId } = req.params;
       const process = await processModel.findById(processId);
       if (!process) {
         return res.status(404).json({ message: 'process does not exist' });
+      }
+
+      // * Get the associated product
+      const product = await productModel.findById(process.productId);
+      if (!product) {
+        return res.status(404).json({ message: 'product does not exist' });
+      }
+
+      // * Check if the user is an admin or the owner of the product
+      if (userRole !== 'admin' && product.renterId.toString() !== userId) {
+        console.log(product.renterId._id.toString(), userId, 'line 5');
+        return res.status(403).json({ message: 'unauthorized user' });
       }
 
       // * Check if the duration is still valid
@@ -162,10 +228,10 @@ export default class Process {
       }
 
       // * Check if the status is valid
-      const validStatuses = ['pending', 'canceled', 'in_progress', 'finished'];
+      const validStatuses = ['pending', 'canceled', 'in progress', 'finished'];
       if (!validStatuses.includes(status)) {
         return res.status(400).json({
-          message: 'status must be pending, canceled, in_progress or finished',
+          message: 'status must be pending, canceled, in progress or finished',
         });
       }
 

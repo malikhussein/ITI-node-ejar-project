@@ -34,7 +34,7 @@ const processSchema = new Schema(
     },
     status: {
       type: String,
-      enum: ['pending', 'canceled', 'in_progress', 'finished'],
+      enum: ['pending', 'canceled', 'in progress', 'finished'],
       default: 'pending',
     },
     price: {
@@ -53,7 +53,7 @@ processSchema.pre('save', function (next) {
   }
 
   if (this.startDate <= today && this.endDate >= today) {
-    this.status = 'in_progress';
+    this.status = 'in progress';
   }
 
   if (this.endDate < today) {
