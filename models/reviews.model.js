@@ -1,11 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 
 const reviewShema = new mongoose.Schema({
-    name: {
-        type: String,
-        required: [true, 'Name is required'],
-        ref: 'User',
-    },
+   
     rating: {
         type: Number,
         required: [true, 'Rating is required'],
@@ -15,14 +11,10 @@ const reviewShema = new mongoose.Schema({
         type: String,
         required: [true, 'Comment is required'],
     },
-    processId:{
-        type:Schema.Types.ObjectId,
-        ref:"process"
-    },
     prodid:{
         type:Schema.Types.ObjectId,
         ref:"Product",
-        required: [true, 'Comment is required'],
+        required: [true, 'Product ID is required'],
 
     },
     createdBy: {
@@ -30,11 +22,6 @@ const reviewShema = new mongoose.Schema({
         ref: 'User',
         required: true,
       },
-    image :{
-        type: String,
-        required: [true, 'Image is required'],
-        ref: 'User',
-    }
 
 }, { timestamps: true });
 
