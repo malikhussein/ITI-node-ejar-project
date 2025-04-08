@@ -8,10 +8,11 @@ export const updateProfilePicture = async (req, res) => {
         message: "No profile picture uploaded",
       });
     }
+    const profileUrl = req.file.secure_url || req.file.path || req.file.url;
 
     const user = await userModel.findByIdAndUpdate(
       req.user.id,
-      { profilePicture: req.file.path },
+      { profilePicture: profileUrl },
       { new: true }
     );
 
@@ -25,7 +26,7 @@ export const updateProfilePicture = async (req, res) => {
     res.status(200).json({
       success: true,
       message: "Profile picture updated successfully",
-      profilePicturePath: req.file.path,
+      profilePicturePath: profileUrl,
     });
   } catch (err) {
     res.status(500).json({

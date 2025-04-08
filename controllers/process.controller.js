@@ -137,6 +137,47 @@ export default class Process {
         .json({ message: error.message || 'internal server error' });
     }
   }
+  static async getFinishedProcesses(req, res) {
+    try {
+      // * Check if request is authenticated
+      if (!req.user) {
+        return res.status(401).json({ message: 'no token provided' });
+      }
+
+      const { id: userId, role: userRole } = req.user;
+
+      // * Check if the user sending the request exists
+      const user = await userModel.findById(userId);
+
+      if (!user) {
+        return res.status(404).json({ message: 'user does not exist' });
+      }
+
+      // * Check if the user is an admin or the same user
+      if (userRole !== 'admin' && user._id.toString() !== userId) {
+        return res.status(403).json({ message: 'unauthorized user' });
+      }
+
+      const products = await productModel.find({ renterId: userId });
+      if (products.length <= 0) {
+        return res.status(404).json({ message: 'no products were found' });
+      }
+
+      const processes = await processModel
+        .find({
+          renterId: userId,
+          status: 'finished',
+        })
+        .populate('productId', '_id name images')
+        .populate('renterId', '_id userName');
+
+      return res.status(200).json(processes);
+    } catch (error) {
+      return res
+        .status(500)
+        .json({ message: error.message || 'internal server error' });
+    }
+  }
 
   static async getProcess(req, res) {
     try {
