@@ -4,8 +4,11 @@ import { validation } from '../middleware/joi.middleware.js';
 import { signInJoiSchema, signUpJoiSchema } from '../config/joi.validation.js';
 import { forgotPassword} from "../controllers/forgotPassword.controller.js";
 import { resetPassword} from "../controllers/resetPassword.controller.js";
-import upload from '../middleware/multer.middleware.js';
-import { cleanupUploadedFiles } from '../middleware/cleanUploadedFiles.middleware.js';
+import upload from '../middleware/cloudinaryUpload.middleware.js'
+// for multer error handling;
+import multer from 'multer';
+
+
 
 const authRoutes = Router();
 
@@ -15,9 +18,15 @@ authRoutes.post(
     { name: 'idPictureFront', maxCount: 1 },
     { name: 'idPictureBack', maxCount: 1 },
   ]),
-  cleanupUploadedFiles,        //  CLEANUP for Uploaded files (Must come before validation)
+  //  Catch Multer errors 
+  (err, req, res, next) => {
+    if (err instanceof multer.MulterError) {
+      return res.status(400).json({ message: err.message });
+    }
+    next(err);
+  },
   validation(signUpJoiSchema), // Validate request
-  authRoutesService.register   // Handle registration
+  authRoutesService.register // Handle registration
 );
 authRoutes.post(
   '/login',
