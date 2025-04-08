@@ -33,12 +33,13 @@ authRoutes.post(
   validation(signInJoiSchema), 
   authRoutesService.login
 );
-authRoutes.post("/login", validation(signInJoiSchema), authRoutesService.login);
 // verify email
-authRoutes.get("/verify/:token", authRoutesService.verifyEmail);
+authRoutes.get('/verify/:token', authRoutesService.verifyEmail);
 
 //  resetpassword flow
 authRoutes.post("/forgot-password", forgotPassword);
-authRoutes.post("/reset-password/:token", resetPassword);
+authRoutes.post("/reset-password/:token", resetPassword); 
+
+
 
 export default authRoutes;
