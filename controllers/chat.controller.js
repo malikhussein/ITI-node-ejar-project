@@ -79,7 +79,7 @@ export default class Chat {
       // add the userpicture
       const chat = await chatModel
         .findById(chatId)
-        .populate('members', '_id userName');
+        .populate('members', '_id userName profilePicture');
 
       // * Check if there is any chats
       if (!chat) {
@@ -122,7 +122,7 @@ export default class Chat {
       // add the userpicture
       const chats = await chatModel
         .find({ members: { $in: [userId] } })
-        .populate('members', '_id userName');
+        .populate('members', '_id userName profilePicture');
 
       // * Check if there is any chats
       if (chats.length <= 0) {
