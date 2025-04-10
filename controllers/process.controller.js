@@ -158,11 +158,6 @@ export default class Process {
         return res.status(403).json({ message: 'unauthorized user' });
       }
 
-      const products = await productModel.find({ renterId: userId });
-      if (products.length <= 0) {
-        return res.status(404).json({ message: 'no products were found' });
-      }
-
       const processes = await processModel
         .find({
           renterId: userId,

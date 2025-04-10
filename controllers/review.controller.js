@@ -1,3 +1,4 @@
+import product from "../models/Product.model.js";
 import reviewModel from "../models/reviews.model.js";
 import userModel from "../models/user.model.js";
 
@@ -20,7 +21,7 @@ const getReviewById = async (req, res) => {
   const { id: reviewId } = req.params;
 
   try {
-    const foundedReview = await reviewModel.findById(reviewId)      
+    const foundedReview = await reviewModel.find({createdBy:reviewId})      
     .populate("createdBy", "userName") 
     .populate("prodid", "name"); 
 ;
@@ -50,13 +51,21 @@ const createReview = async (req, res) => {
 
     const { rating, comment, prodid } = req.body;
 
-    if (!rating || !comment || !prodid) {
+    if (!rating ) {
       return res.status(400).json({ message: "Please complete all fields" });
     }
 
+    if ( !comment) {
+      return res.status(400).json({ message: "Please add a comment" });
+    }
+
+    if (!prodid) {
+      return res.status(400).json({ message: "Please add a product ID" });
+    }
+
     // Check if the product exists
-    const product = await productModel.findById(prodid);
-    if (!product) {
+    const foundproduct = await product.findById(prodid);
+    if (!foundproduct) {
       return res.status(404).json({ message: "Product not found" });
     }
 
