@@ -102,6 +102,9 @@ export const updateProduct = async (req, res) => {
       const imageUrls = req.files.map((file) => file.path);
       product.images = [...product.images, ...imageUrls];
     }
+    if (confirmMessage !== undefined) {
+      product.confirmMessage = confirmMessage;
+    }
 
     product.name = name || product.name;
     product.brand = brand || product.brand;
@@ -115,7 +118,6 @@ export const updateProduct = async (req, res) => {
     product.gasoline = gasoline || product.gasoline;
     product.status = status || product.status;
     product.images = images || product.images;
-    product.confirmMessage = confirmMessage || product.confirmMessage;
     product.confirmed = confirmed;
 
     await product.save();
