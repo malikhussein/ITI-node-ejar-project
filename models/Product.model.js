@@ -20,7 +20,7 @@ const productSchema = new Schema(
       type: String,
       enum: ["available", "rented", "unavailable"],
       required: true,
-      default: "unavailable",
+      default: "available",
     },
     confirmed: {
       type: Boolean,
