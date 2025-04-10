@@ -16,6 +16,8 @@ const io = new Server(server, {
   },
 });
 
+app.set('io', io);
+
 app.use(cors());
 app.use(express.json());
 
@@ -31,6 +33,13 @@ io.on('connection', (socket) => {
     const message = { chatId, senderId, content };
 
     io.to(chatId).emit('recieveMessage', message);
+  });
+
+  socket.on('joinUserNotifications', (userId) => {
+    socket.join(`user-${userId}`);
+    console.log(
+      `User ${socket.id} joined personal notification channel for user ${userId}`
+    );
   });
 
   socket.on('disconnect', () => {
