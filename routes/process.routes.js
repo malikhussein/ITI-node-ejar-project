@@ -17,11 +17,7 @@ processRouter.get("/", authMiddleware, Process.getAllProcesses);
 processRouter.get("/user", authMiddleware, Process.getUserProcesses);
 processRouter.get("/finished", authMiddleware, Process.getFinishedProcesses);
 processRouter.get("/:id", authMiddleware, Process.getProcess);
-processRouter.get(
-  "/getprod/:id",
-  authMiddleware,
-  Process.getInProgressProcessesByProduct
-);
+processRouter.get("/getprod/:id", Process.getInProgressProcessesByProduct);
 
 processRouter.put("/:id", authMiddleware, Process.updateStatus);
 processRouter.delete("/:id", authMiddleware, Process.deleteProcess);
