@@ -1,10 +1,10 @@
-import { Schema, model } from 'mongoose';
+import { Schema, model } from "mongoose";
 
 const productSchema = new Schema(
   {
     renterId: {
       type: Schema.Types.ObjectId,
-      ref: 'User',
+      ref: "User",
       required: true,
     },
     name: {
@@ -13,14 +13,14 @@ const productSchema = new Schema(
     },
     category: {
       type: Schema.Types.ObjectId,
-      ref: 'Category',
+      ref: "Category",
       required: true,
     },
     status: {
       type: String,
-      enum: ['available', 'rented', 'unavailable'],
+      enum: ["available", "rented", "unavailable"],
       required: true,
-      default: 'available',
+      default: "unavailable",
     },
     confirmed: {
       type: Boolean,
@@ -28,12 +28,12 @@ const productSchema = new Schema(
     },
     confirmMessage: {
       type: String,
-      default: '',
+      default: "",
     },
     brand: {
       type: String,
       required: true,
-      default: 'brand',
+      default: "brand",
     },
     rentedFor: {
       type: String,
@@ -55,7 +55,7 @@ const productSchema = new Schema(
 
     images: {
       type: [String],
-      validate: [arrayLimit, 'You can upload up to 4 images only'],
+      validate: [arrayLimit, "You can upload up to 4 images only"],
     },
   },
   {
@@ -70,14 +70,14 @@ function arrayLimit(val) {
 }
 
 productSchema.pre(/^find/, function (next) {
-  this.populate({ path: 'category', select: 'name' }).populate({
-    path: 'renterId',
-    select: ' userName  _id',
+  this.populate({ path: "category", select: "name" }).populate({
+    path: "renterId",
+    select: " userName  _id",
   });
   next();
 });
 
-productSchema.pre('save', function (next) {
+productSchema.pre("save", function (next) {
   if (this.daily) {
     this.weekly = this.daily * 7;
     this.monthly = this.daily * 30;
@@ -85,18 +85,18 @@ productSchema.pre('save', function (next) {
   next();
 });
 
-productSchema.virtual('review', {
-  ref: 'Reviews',
-  foreignField: 'prodid',
-  localField: '_id',
+productSchema.virtual("review", {
+  ref: "Reviews",
+  foreignField: "prodid",
+  localField: "_id",
 });
-productSchema.virtual('averageRating').get(function () {
+productSchema.virtual("averageRating").get(function () {
   if (!this.review || this.review.length === 0) return 0;
 
   const totalRating = this.review.reduce((sum, rev) => sum + rev.rating, 0);
   return Math.round(totalRating / this.review.length);
 });
 
-const product = model('Product', productSchema);
+const product = model("Product", productSchema);
 
 export default product;
