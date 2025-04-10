@@ -13,7 +13,7 @@ const notificationSchema = new Schema(
     },
     type: {
       type: String,
-      enum: ['verification', 'message', 'system'],
+      enum: ['verification', 'message', 'system', 'product_confirmation'],
       default: 'system',
     },
     read: {

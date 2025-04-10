@@ -4,6 +4,7 @@ import { v2 as cloudinary } from 'cloudinary';
 import { CloudinaryStorage } from 'multer-storage-cloudinary';
 import multer from 'multer';
 import Product from '../models/Product.model.js';
+import notificationModel from '../models/notification.model.js';
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -91,6 +92,45 @@ export const updateProduct = async (req, res) => {
         .json({ status: 'fail', message: 'Product not found' });
     }
 
+    // Check if confirmation status is being changed
+    if (confirmed !== undefined && confirmed !== product.confirmed) {
+      // Get product owner's ID to send notification
+      const ownerId = product.renterId;
+
+      // Create notification message based on new status
+      const notificationMessage = confirmed
+        ? `Your product "${product.name}" has been approved`
+        : `Your product "${product.name}" has been rejected${
+            confirmMessage ? `: ${confirmMessage}` : ''
+          }`;
+
+      // * save notification to database
+      const notification = new notificationModel({
+        userId: ownerId,
+        message: notificationMessage,
+        type: 'product_confirmation',
+        data: {
+          productId: product._id,
+          confirmed: confirmed,
+          confirmMessage: confirmMessage || '',
+        },
+      });
+      await notification.save();
+
+      // * send notification through socket
+      const io = req.app.get('io');
+      if (io) {
+        io.to(`user-${ownerId._id}`).emit('productConfirmationChanged', {
+          userId: ownerId,
+          notificationId: notification._id,
+          message: notificationMessage,
+          productId: product._id,
+          confirmed: confirmed,
+          productName: product.name,
+        });
+      }
+    }
+
     if (removeImages && removeImages.length > 0) {
       product.images = product.images.filter(
         (img) => !removeImages.includes(img)
@@ -114,7 +154,7 @@ export const updateProduct = async (req, res) => {
     product.gasoline = gasoline || product.gasoline;
     product.images = images || product.images;
     product.confirmMessage = confirmMessage || product.confirmMessage;
-    product.confirmed = confirmed;
+    product.confirmed = confirmed !== undefined ? confirmed : product.confirmed;
 
     await product.save();
 
