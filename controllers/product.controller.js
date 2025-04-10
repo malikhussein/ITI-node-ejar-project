@@ -14,13 +14,13 @@ cloudinary.config({
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
-    folder: 'User_Images',
-    resource_type: 'image', // هنا هنرفع صور
-    allowedFormats: ['jpg', 'jpeg', 'png'],
+    folder: "User_Images",
+    resource_type: "image", // هنا هنرفع صور
+    allowedFormats: ["jpg", "jpeg", "png"],
   },
 });
 
-export const upload = multer({ storage }).array('images', 4);
+export const upload = multer({ storage }).array("images", 4);
 export const addProduct = async (req, res) => {
   try {
     const { name, description, category, daily } = req.body;
@@ -28,20 +28,20 @@ export const addProduct = async (req, res) => {
     if (!req.files || req.files.length === 0) {
       return res
         .status(400)
-        .json({ status: 'fail', message: 'No images uploaded' });
+        .json({ status: "fail", message: "No images uploaded" });
     }
 
     if (req.files.length > 4) {
       return res.status(400).json({
-        status: 'fail',
-        message: 'You can upload up to 4 images only',
+        status: "fail",
+        message: "You can upload up to 4 images only",
       });
     }
 
     if (!req.files || req.files.length === 0) {
       return res
         .status(400)
-        .json({ status: 'fail', message: 'Please upload at least one image.' });
+        .json({ status: "fail", message: "Please upload at least one image." });
     }
     const imageUrls = req.files.map((file) => file.path);
 
@@ -56,13 +56,13 @@ export const addProduct = async (req, res) => {
 
     await newProduct.save();
     res.status(201).json({
-      status: 'success',
-      message: 'Product added successfully',
+      status: "success",
+      message: "Product added successfully",
       product: newProduct,
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ status: 'fail', message: error.message });
+    res.status(500).json({ status: "fail", message: error.message });
   }
 };
 export const updateProduct = async (req, res) => {
@@ -76,6 +76,7 @@ export const updateProduct = async (req, res) => {
       rating,
       reviews,
       type,
+      status,
       steering,
       capacity,
       gasoline,
@@ -89,7 +90,7 @@ export const updateProduct = async (req, res) => {
     if (!product) {
       return res
         .status(404)
-        .json({ status: 'fail', message: 'Product not found' });
+        .json({ status: "fail", message: "Product not found" });
     }
 
     // Check if confirmation status is being changed
@@ -141,6 +142,9 @@ export const updateProduct = async (req, res) => {
       const imageUrls = req.files.map((file) => file.path);
       product.images = [...product.images, ...imageUrls];
     }
+    if (confirmMessage !== undefined) {
+      product.confirmMessage = confirmMessage;
+    }
 
     product.name = name || product.name;
     product.brand = brand || product.brand;
@@ -152,6 +156,7 @@ export const updateProduct = async (req, res) => {
     product.steering = steering || product.steering;
     product.capacity = capacity || product.capacity;
     product.gasoline = gasoline || product.gasoline;
+    product.status = status || product.status;
     product.images = images || product.images;
     product.confirmMessage = confirmMessage || product.confirmMessage;
     product.confirmed = confirmed !== undefined ? confirmed : product.confirmed;
@@ -159,13 +164,13 @@ export const updateProduct = async (req, res) => {
     await product.save();
 
     res.status(200).json({
-      status: 'success',
-      message: 'Product updated successfully',
+      status: "success",
+      message: "Product updated successfully",
       product,
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ status: 'fail', message: error.message });
+    res.status(500).json({ status: "fail", message: error.message });
   }
 };
 
@@ -175,19 +180,19 @@ export const getAllProducts = async (req, res) => {
 
     const filter = category ? { category } : {};
     const products = await Product.find(filter)
-      .populate('category', 'name')
-      .populate('renterId', 'username email')
-      .populate('review');
+      .populate("category", "name")
+      .populate("renterId", "username email")
+      .populate("review");
 
     res.status(200).json({
-      status: 'success',
+      status: "success",
       results: products.length,
       data: products,
     });
   } catch (error) {
     res.status(500).json({
-      status: 'error',
-      message: 'Something went wrong',
+      status: "error",
+      message: "Something went wrong",
       error: error.message,
     });
   }
@@ -199,23 +204,23 @@ export const getOneProduct = async (req, res) => {
     if (!prodid) {
       return res
         .status(400)
-        .json({ status: 'fail', message: 'Invalid product ID' });
+        .json({ status: "fail", message: "Invalid product ID" });
     }
 
     let theproduct = await Product.findById(prodid)
-      .populate('category', 'name')
-      .populate('renterId', 'username email')
-      .populate('review');
+      .populate("category", "name")
+      .populate("renterId", "username email")
+      .populate("review");
 
     if (!theproduct) {
       return res
         .status(404)
-        .json({ status: 'fail', message: 'Product Not Found' });
+        .json({ status: "fail", message: "Product Not Found" });
     }
 
-    res.status(200).json({ status: 'success', data: theproduct });
+    res.status(200).json({ status: "success", data: theproduct });
   } catch (error) {
-    res.status(500).json({ status: 'error', message: error.message });
+    res.status(500).json({ status: "error", message: error.message });
   }
 };
 
@@ -225,13 +230,13 @@ export const removeProduct = async (req, res) => {
     if (!prodid) {
       return res
         .status(404)
-        .json({ status: 'fail', message: 'invalid product id' });
+        .json({ status: "fail", message: "invalid product id" });
     }
 
     let theProduct = await Product.findByIdAndDelete(prodid);
 
-    res.status(200).json({ status: 'success', message: 'deleted' });
+    res.status(200).json({ status: "success", message: "deleted" });
   } catch (error) {
-    res.status(400).json({ status: 'fail', message: error.message });
+    res.status(400).json({ status: "fail", message: error.message });
   }
 };
