@@ -208,9 +208,16 @@ export const getOneProduct = async (req, res) => {
     }
 
     let theproduct = await Product.findById(prodid)
-      .populate("category", "name")
-      .populate("renterId", "username email")
-      .populate("review");
+    .populate("category", "name")
+    .populate("renterId", "username email")
+    .populate({
+      path: "review",
+      populate: {
+        path: "createdBy",
+        select: "userName  profilePicture _id" 
+      }
+    });
+  
 
     if (!theproduct) {
       return res
