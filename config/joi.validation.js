@@ -10,12 +10,11 @@ const signUpJoiSchema = joi.object({
     .min(3)
     .max(30)
     .required()
-    .pattern(/^[a-zA-Z0-9_ ]+$/)
+    .pattern(/^[a-zA-Z_ ]+$/)
     .messages({
       'string.min': 'Username must be at least 3 characters long',
       'string.max': 'Username cannot exceed 30 characters',
-      'string.pattern.base':
-        'Username can only contain letters, numbers, underscores and spaces',
+      'string.pattern.base': 'Username must only contain letters, underscores, and spaces',
       'any.required': 'Username is required',
     }),
 
@@ -61,18 +60,15 @@ const signUpJoiSchema = joi.object({
     }),
     
     dob: joi.date()
-    //not older than 70
-  .greater(maxDOB)
-    //at least 15 years old
-    .less(minDOB)
+    .less(minDOB) // → at least 15 years old
+    .greater(maxDOB) // → not older than 70
     .required()
     .messages({
-      "date.greater": "You must not be older than 70 years old",
       "date.less": "You must be at least 15 years old",
+      "date.greater": "You must not be older than 70 years old",
       "date.base": "Date of birth must be a valid date",
       "any.required": "Date of birth is required",
     }),
-  
   
 
   address: joi.string().min(7).max(50).required().messages({
@@ -119,12 +115,11 @@ const signInJoiSchema = joi.object({
   .string()
   .min(3)
   .max(30)
-  .pattern(/^[a-zA-Z0-9_ ]+$/)
+  .pattern(/^[a-zA-Z_ ]+$/)
   .messages({
     'string.min': 'Username must be at least 3 characters long',
     'string.max': 'Username cannot exceed 30 characters',
-    'string.pattern.base':
-      'Username can only contain letters, numbers, underscores and spaces',
+    'string.pattern.base': 'Username must only contain letters, underscores, and spaces',
   }),
   phone: joi.string().pattern(/^01[0-9]{9}$/).messages({
     'string.pattern.base': 'Phone must be a valid Egyptian number (01xxxxxxxxx)',
