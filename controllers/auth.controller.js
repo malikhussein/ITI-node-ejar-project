@@ -252,7 +252,7 @@ const verifyEmail = async (req, res) => {
         <h1>Email Verified ✅</h1>
         <p>Welcome aboard! </p>
         <p>Your email has been successfully verified.</p>
-        <p>We’re thrilled to have you with us.</p>
+        <p>We're thrilled to have you with us.</p>
         <p>Click below to start your journey:</p>
         <a href="http://localhost:5173/login" class="btn">Go to Website</a>
       </div>
