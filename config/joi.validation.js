@@ -60,13 +60,15 @@ const signUpJoiSchema = joi.object({
     }),
     
     dob: joi.date()
+    .iso() // → YYYY-MM-DD format
     .less(minDOB) // → at least 15 years old
     .greater(maxDOB) // → not older than 70
     .required()
     .messages({
+      "date.format": "Date of birth must be in YYYY-MM-DD format",
+      "date.base": "Date of birth must be a valid date",
       "date.less": "You must be at least 15 years old",
       "date.greater": "You must not be older than 70 years old",
-      "date.base": "Date of birth must be a valid date",
       "any.required": "Date of birth is required",
     }),
   
