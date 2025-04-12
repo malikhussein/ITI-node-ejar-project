@@ -7,7 +7,7 @@ const categorySchema = new Schema(
       required: [true, "Category name is required"],
       unique: [true, "Category name must be unique"],
       minlength: [3, "Category name must be at least 3 characters"],
-      maxlength: [40, "Category name cannot exceed 40 characters"],
+      maxlength: [15, "Category name cannot exceed 15 characters"],
     },
     icon: {
       type: String,

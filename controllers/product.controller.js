@@ -71,6 +71,7 @@ export const updateProduct = async (req, res) => {
     const {
       name,
       brand,
+      category,
       description,
       daily,
       rating,
@@ -151,6 +152,7 @@ export const updateProduct = async (req, res) => {
 
     product.name = name || product.name;
     product.brand = brand || product.brand;
+    product.category = category || product.category;
     product.description = description || product.description;
     product.daily = daily || product.daily;
     product.rating = rating || product.rating;
