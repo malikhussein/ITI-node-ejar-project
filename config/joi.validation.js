@@ -51,7 +51,7 @@ const signUpJoiSchema = joi.object({
 
   phone: joi
     .string()
-    .pattern(/^01[0-9]{9}$/)
+    .pattern(/^01[0125][0-9]{8}$/)
     .required()
     .messages({
       'string.pattern.base':
