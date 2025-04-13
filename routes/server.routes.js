@@ -8,10 +8,12 @@ import processRouter from './process.routes.js';
 import chatRouter from './chat.routes.js';
 import messageRouter from './message.routes.js';
 import notificationRouter from './notification.routes.js';
+import wishlistRoutes from './wishlist.routes.js';
 
 const mainRouter = Router();
 mainRouter.use('/product', Productrouter);
 
+mainRouter.use('/wishlist', wishlistRoutes); // /api/wishlist
 mainRouter.use('/category', categoryRoutes);
 mainRouter.use('/auth', authRoutes);
 mainRouter.use('/user', userRoutes);
