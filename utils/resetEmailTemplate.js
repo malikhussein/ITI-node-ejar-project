@@ -67,6 +67,9 @@ export const resetPasswordEmailTemplate = (url,  name = "User") => {
           .email-footer a:hover {
               text-decoration: underline;
           }
+              .ii a[href] {
+                    color: #ffffff;
+                }
       </style>
   </head>
   <body>
