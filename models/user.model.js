@@ -40,6 +40,13 @@ idPictureBackPath: {
   type: String,
   required: [true, 'Back side of national ID is required'],
 },
+// wishlist is an array of ObjectId references to the Product model
+wishlist: [
+  {
+    type: Schema.Types.ObjectId,
+    ref: 'Product',
+  },
+],
 
 
   resetPasswordToken: String,
