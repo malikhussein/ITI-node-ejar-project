@@ -10,12 +10,14 @@ import {
 import authMiddleware from '../middleware/auth.middleware.js';
 import { validation } from '../middleware/joi.middleware.js';
 import { ProductSchema } from '../config/joi.product.validation.js';
+import { requireVerification } from '../middleware/verification.middleware.js';
 
 const Productrouter = Router();
 
 Productrouter.post(
   '/',
   authMiddleware,
+  requireVerification,
   upload,
   validation(ProductSchema),
   addProduct
