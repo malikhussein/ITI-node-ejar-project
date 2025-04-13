@@ -123,7 +123,7 @@ const signInJoiSchema = joi.object({
     'string.max': 'Username cannot exceed 30 characters',
     'string.pattern.base': 'Username must only contain letters, underscores, and spaces',
   }),
-  phone: joi.string().pattern(/^01[0-9]{9}$/).messages({
+  phone: joi.string().pattern(/^01[0125][0-9]{8}$/).messages({
     'string.pattern.base': 'Phone must be a valid Egyptian number (01xxxxxxxxx)',
   }),
   password: joi
