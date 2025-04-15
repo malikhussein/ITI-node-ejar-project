@@ -7,7 +7,7 @@ const roleType = {
 const userSchema = new Schema({
   userName: { type: String, required: [true, 'UserName field is required'],
     minlength: 3,
-    maxlength: 29,
+    maxlength: 30,
   },
   email:    { type: String, required: [true, 'Email is required'], unique: true },
   confirmEmail: { type: Boolean, default: false, },
