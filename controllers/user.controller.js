@@ -279,12 +279,14 @@ export const toggleVerification = async (req, res) => {
 
     user.isVerified = !user.isVerified; //  Toggle the value
     await user.save();
+    //  Send a notification to the user about the verification status change
+    const statusMessage = user.isVerified
+  ? ' Your account has been verified! Please log out and log in again to access all features.'
+  : ' Your account has been unverified (banned). You can no longer  access all features. Please contact support for more information.';
 
     const notification = new notificationModel({
       userId: user._id,
-      message: `Your account has been ${
-        user.isVerified ? 'verified' : 'unverified'
-      }`,
+      message: statusMessage,
       type: 'verification',
       data: {
         isVerified: user.isVerified,
@@ -297,9 +299,8 @@ export const toggleVerification = async (req, res) => {
     io.to(`user-${user._id}`).emit('userVerificationChanged', {
       userId: user._id,
       isVerified: user.isVerified,
-      message: `Your account has been ${
-        user.isVerified ? 'verified' : 'unverified'
-      }`,
+      message: statusMessage,
+
     });
 
     res.status(200).json({
