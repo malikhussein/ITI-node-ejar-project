@@ -80,14 +80,40 @@ const signUpJoiSchema = joi.object({
   }),
 
   idNumber: joi
-    .string()
-    .pattern(/^[2-3][0-9]{13}$/)
-    .required()
-    .messages({
-      'string.pattern.base':
-        'ID Number must start with 2 or 3 and be 14 digits total',
-      'any.required': 'ID Number is required',
-    }),
+  .string()
+  .pattern(/^[2-3][0-9]{13}$/)
+  .required()
+  .custom((value, helpers) => {
+    const dob = helpers.state.ancestors[0]?.dob;
+    if (!dob) return value; // Skip check if dob not present (will be handled by dob field)
+
+    const dobDate = new Date(dob);
+    const year = dobDate.getFullYear();
+    const month = String(dobDate.getMonth() + 1).padStart(2, '0');
+    const day = String(dobDate.getDate()).padStart(2, '0');
+
+    const idCentury = value.charAt(0) === '2' ? 1900 : 2000;
+    const idYear = parseInt(value.substring(1, 3), 10);
+    const idMonth = value.substring(3, 5);
+    const idDay = value.substring(5, 7);
+    const fullIdYear = idCentury + idYear;
+
+    if (
+      fullIdYear !== year ||
+      idMonth !== month ||
+      idDay !== day
+    ) {
+      return helpers.message('ID Number does not match Date of Birth');
+    }
+
+    return value;
+  })
+  .messages({
+    'string.pattern.base':
+      'ID Number must start with 2 or 3 and be 14 digits total',
+    'any.required': 'ID Number is required',
+  }),
+
 
   gender: joi.string().valid('male', 'female').required().messages({
     'any.required': 'Gender is required',
